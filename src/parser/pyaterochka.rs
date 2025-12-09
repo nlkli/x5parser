@@ -129,12 +129,17 @@ pub async fn read_pyaterochka_coords(path: Option<&str>) -> Result<Vec<[f32; 2]>
 }
 
 async fn set_cookies_from_path(b: &Browser, path: &str) -> Result<()> {
+    if !std::fs::exists(path).unwrap_or(false) {
+        return Ok(());
+    }
     let cookies_json = tokio::fs::read_to_string(path).await?;
     let cookies_param = serde_json::from_str::<Vec<Cookie>>(&cookies_json)?
         .into_iter()
         .map(bu::cookie_into_param)
         .collect::<Vec<_>>();
-    b.set_cookies(cookies_param).await?;
+    if !cookies_param.is_empty() {
+        b.set_cookies(cookies_param).await?;
+    }
     Ok(())
 }
 
