@@ -1,6 +1,7 @@
 {
     "db_path": "database.sqlite",
-    "browser_executable": "/Users/Nikita/Projects/supermarkets/chrome/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "browser_executable": "/Users/Nikita/Projects/x5parser/chrome/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
     "cookies_store_path": "cookies",
-    "pyaterochka_stores_coord_path": "pyaterochka_stores_coord.json"
+    "pyaterochka_stores_coord_path": "pyaterochka_stores_coord.json",
+    "sleep_millis_for_each_catalog": 900
 }

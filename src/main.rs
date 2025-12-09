@@ -10,6 +10,7 @@ pub struct Config<'a> {
     pub browser_executable: Option<&'a str>,
     pub cookies_store_path: Option<&'a str>,
     pub pyaterochka_stores_coord_path: Option<&'a str>,
+    pub sleep_millis_for_each_catalog: Option<u64>,
 }
 
 #[tokio::main]
@@ -27,6 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         browser_executable: config.browser_executable, 
         cookies_store_path: config.cookies_store_path, 
         pyaterochka_stores_coord_path: config.pyaterochka_stores_coord_path,
+        sleep_millis_for_each_catalog: config.sleep_millis_for_each_catalog,
     };
     if let Err(e) = parser::pyaterochka::start_parsing(&parse_config).await {
         eprintln!("Error: {e}");

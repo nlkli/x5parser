@@ -156,13 +156,13 @@ async fn pyaterochka_update_cookies_with_borwser(
     )
     .await?;
 
-    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+    tokio::time::sleep(Duration::from_secs(5)).await;
 
     while let Some(url) = page.url().await? {
         if url.as_str() == HOME_PAGE_URL {
             break;
         }
-        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        tokio::time::sleep(Duration::from_secs(1)).await;
     }
 
     let cookies = b.get_cookies().await?;
@@ -200,6 +200,7 @@ pub struct ParseConfig<'a> {
     pub browser_executable: Option<&'a str>,
     pub cookies_store_path: Option<&'a str>,
     pub pyaterochka_stores_coord_path: Option<&'a str>,
+    pub sleep_millis_for_each_catalog: Option<u64>,
 }
 
 pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
@@ -241,6 +242,7 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
             .await;
             if page.is_err() {
                 eprintln!("Not found store info content block");
+                tokio::time::sleep(Duration::from_millis(500)).await;
                 continue;
             }
             let page = unsafe { page.unwrap_unchecked() };
@@ -254,6 +256,7 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
             let store_api_info = serde_json::from_str::<models::StoreApiInfo>(&content);
             if store_api_info.is_err() {
                 eprintln!("Not found store info content");
+                tokio::time::sleep(Duration::from_millis(500)).await;
                 continue;
             }
             let store_api_info = unsafe { store_api_info.unwrap_unchecked() };
@@ -277,7 +280,7 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
                             &b,
                             &bu::OpenPageParams {
                                 url: url.as_str(),
-                                wait: ("pre", std::time::Duration::from_secs(9)),
+                                wait: ("pre", Duration::from_secs(9)),
                             },
                         )
                         .await?;
@@ -294,7 +297,9 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
                         Result::Ok(result)
                     });
                 }
-                tokio::time::sleep(std::time::Duration::from_millis(750)).await;
+                tokio::time::sleep(
+                    Duration::from_millis(pc.sleep_millis_for_each_catalog.unwrap_or(700))
+                ).await;
             }
             let catalogs = join_set
                 .join_all()
