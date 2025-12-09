@@ -1,0 +1,6 @@
+/target
+/chrome
+*.bac
+database*
+.DS_Store
+*.sqlite
