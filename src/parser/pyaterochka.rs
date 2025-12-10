@@ -221,12 +221,14 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
         set_cookies_from_path(&b, cookies_store_path).await?;
     }
     let stores_coords = read_pyaterochka_coords(pc.pyaterochka_stores_coord_path).await?;
-    let store_by_coord_urls = stores_coords
+    let mut store_by_coord_urls = stores_coords
         .into_iter()
         .map(|v| store_from_coord_url(v[0], v[1]))
         .collect::<Vec<_>>();
+    let mut rng = rand::rng();
     loop {
         let mut stores_set = HashSet::new();
+        store_by_coord_urls.shuffle(&mut rng);
         for (sn, s) in store_by_coord_urls.iter().enumerate() {
             let _ = bu::cleanup_browser_pages(&b).await;
             let page = bu::open_page(
