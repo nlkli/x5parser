@@ -226,9 +226,6 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
         .map(|v| store_from_coord_url(v[0], v[1]))
         .collect::<Vec<_>>();
     loop {
-        if rx.try_recv().is_ok() {
-            return Ok(());
-        }
         let mut stores_set = HashSet::new();
         for (sn, s) in store_by_coord_urls.iter().enumerate() {
             let _ = bu::cleanup_browser_pages(&b).await;
@@ -241,6 +238,9 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
             )
             .await;
             if page.is_err() {
+                if rx.try_recv().is_ok() {
+                    return Ok(());
+                }
                 eprintln!("Not found store info content block");
                 tokio::time::sleep(Duration::from_millis(500)).await;
                 continue;
