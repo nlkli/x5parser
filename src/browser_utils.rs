@@ -5,12 +5,19 @@ use tokio_stream::StreamExt;
 
 const DEFAULT_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 
-const DEFAULT_LAUNCH_ARGS: [&str; 5] = [
+const DEFAULT_LAUNCH_ARGS: [&str; 12] = [
     "--no-first-run",
     "--disable-infobars",
+    "--disable-notifications",
+    "--disable-default-apps",
+    "--disable-sync",
     "--no-sandbox",
     "--disable-blink-features=AutomationControlled",
     "--lang=en_US",
+    "--disable-translate",
+    "--disable-features=TranslateUI",
+    "--no-default-browser-check",
+    "--disable-session-crashed-bubble",
 ];
 
 const DEFAULT_WAIT_PAGE_ELEMENT_DURATION: Duration = Duration::from_secs(15);

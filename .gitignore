@@ -4,3 +4,4 @@
 database*
 .DS_Store
 *.sqlite
+cookies
