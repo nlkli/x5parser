@@ -60,7 +60,7 @@ pub struct ProductInfo {
 pub struct StoreInfo {
     pub id: String,
     pub address: String,
-    pub city: String,
+    pub city: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
@@ -69,7 +69,7 @@ pub struct StoreApiInfo {
     pub shop_address: String,
 
     #[serde(default)]
-    pub store_city: String,
+    pub store_city: Option<String>,
 
     #[serde(default)]
     pub sap_code: String,

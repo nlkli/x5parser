@@ -1,0 +1,16 @@
+[
+  {
+    "name": "SRV",
+    "value": "cd8c842d-1633-4cdf-ac33-658120ac32e7",
+    "domain": "5d.5ka.ru",
+    "path": "/",
+    "expires": -1.0,
+    "size": 39,
+    "httpOnly": false,
+    "secure": false,
+    "session": true,
+    "priority": "Medium",
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  }
+]

@@ -244,6 +244,9 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
                     return Ok(());
                 }
                 eprintln!("Not found store info content block");
+                if rx.try_recv().is_ok() {
+                    return Ok(());
+                }
                 tokio::time::sleep(Duration::from_millis(500)).await;
                 continue;
             }
@@ -256,6 +259,9 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
                 .await?
                 .unwrap_or_default();
             let store_api_info = serde_json::from_str::<models::StoreApiInfo>(&content);
+            if let Err(ref e) = store_api_info {
+                eprintln!("StoreApiInfo from str: {:?}", e)
+            }
             if store_api_info.is_err() {
                 eprintln!("Not found store info content");
                 tokio::time::sleep(Duration::from_millis(500)).await;
@@ -268,7 +274,7 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
                 continue;
             }
             println!(
-                "---------------------------------------\n{sn}. {} - {}\n---------------------------------------",
+                "---------------------------------------\n{sn}. {} - {:?}\n---------------------------------------",
                 store_info.address, store_info.city
             );
             let mut join_set = JoinSet::new();
