@@ -22,7 +22,7 @@ const DEFAULT_LAUNCH_ARGS: [&str; 12] = [
 
 const DEFAULT_WAIT_PAGE_ELEMENT_DURATION: Duration = Duration::from_secs(15);
 
-pub async fn launch_browser(executable: Option<&str>, headless_mode: HeadlessMode) -> Result<Browser> {
+pub async fn launch_browser(executable: Option<&str>, user_data_dir: Option<&str>, headless_mode: HeadlessMode) -> Result<Browser> {
     let mut browser_config_builder = BrowserConfig::builder()
         .disable_default_args()
         .viewport(None)
@@ -31,6 +31,10 @@ pub async fn launch_browser(executable: Option<&str>, headless_mode: HeadlessMod
 
     if let Some(path) = executable {
         browser_config_builder = browser_config_builder.chrome_executable(path);
+    }
+
+    if let Some(path) = user_data_dir {
+        browser_config_builder = browser_config_builder.user_data_dir(path);
     }
 
     let browser_config = browser_config_builder

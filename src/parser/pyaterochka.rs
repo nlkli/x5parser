@@ -180,9 +180,10 @@ async fn pyaterochka_update_cookies_with_borwser(
 
 async fn pyaterochka_update_cookies(
     executable: Option<&str>,
+    user_data_dir: Option<&str>,
     cookies_store_path: Option<&str>,
 ) -> Result<Vec<Cookie>> {
-    let mut b = bu::launch_browser(executable, HeadlessMode::False).await?;
+    let mut b = bu::launch_browser(executable, user_data_dir, HeadlessMode::False).await?;
 
     if let Some(path) = cookies_store_path {
         set_cookies_from_path(&b, path).await?;
@@ -199,18 +200,28 @@ async fn pyaterochka_update_cookies(
 pub struct ParseConfig<'a> {
     pub browser_executable: Option<&'a str>,
     pub cookies_store_path: Option<&'a str>,
+    pub user_data_dir: Option<&'a str>,
     pub pyaterochka_stores_coord_path: Option<&'a str>,
     pub sleep_millis_for_each_catalog: Option<u64>,
 }
 
 pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
-    pyaterochka_update_cookies(pc.browser_executable, pc.cookies_store_path).await?;
-    let b = Arc::new(bu::launch_browser(pc.browser_executable, HeadlessMode::True).await?);
+    pyaterochka_update_cookies(
+        pc.browser_executable,
+        pc.user_data_dir,
+        pc.cookies_store_path,
+    )
+    .await?;
+    let b = Arc::new(
+        bu::launch_browser(pc.browser_executable, pc.user_data_dir, HeadlessMode::True).await?,
+    );
     let (tx, mut rx) = tokio::sync::oneshot::channel::<()>();
     {
         let b = b.clone();
         tokio::spawn(async move {
-            tokio::signal::ctrl_c().await.expect("Failed to listen for Ctrl+C");
+            tokio::signal::ctrl_c()
+                .await
+                .expect("Failed to listen for Ctrl+C");
             println!("\nCtrl+C received, initiating graceful shutdown...");
             let browser_ref = unsafe { &mut *(Arc::<Browser>::as_ptr(&b) as *mut Browser) };
             bu::close_browser(browser_ref).await;
@@ -305,9 +316,10 @@ pub async fn start_parsing<'a>(pc: &ParseConfig<'a>) -> Result<()> {
                         Result::Ok(result)
                     });
                 }
-                tokio::time::sleep(
-                    Duration::from_millis(pc.sleep_millis_for_each_catalog.unwrap_or(700))
-                ).await;
+                tokio::time::sleep(Duration::from_millis(
+                    pc.sleep_millis_for_each_catalog.unwrap_or(700),
+                ))
+                .await;
             }
             let catalogs = join_set
                 .join_all()

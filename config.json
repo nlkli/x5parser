@@ -1,6 +1,7 @@
 {
     "db_path": "database.sqlite",
     "browser_executable": "chrome/chrome",
+    "user_data_dir": "user_data",
     "cookies_store_path": "cookies",
     "pyaterochka_stores_coord_path": "pyaterochka_stores_coord.json",
     "sleep_millis_for_each_catalog": 900
